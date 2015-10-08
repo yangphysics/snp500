@@ -14,7 +14,7 @@ To add in your python code:
 
 ```python
 date = '2014-08-01'
-print('\n TEST-II:\n   We want to get S&P 500 list on date {0}'.format(date))
+print('\n We want to get S&P 500 list on date {0}'.format(date))
 snp = snp500(date=date)
 print(' the first 20 items in the list: {0}\n'.format(snp[:20]))
 ```
