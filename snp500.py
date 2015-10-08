@@ -123,6 +123,10 @@ def test():
     snp2 = snp500(date=date2)
     print(' the first 20 items in the list: {0}\n'.format(snp2[:20]))
 
+    date = '2014-03-01'
+    print('\n TEST-II:\n   We want to get S&P 500 list on date {0}'.format(date))
+    snp = snp500(date=date)
+    print(' the first 20 items in the list: {0}\n'.format(snp[:20]))
 if __name__ == '__main__':
     test()
 
