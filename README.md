@@ -13,6 +13,8 @@ To test on the terminal:
 To add in your python code:
 
 ```python
+from snp500 import SNP500
+snp500 = SNP500(is_print=True)
 date = '2014-08-01'
 print('\n We want to get S&P 500 list on date {0}'.format(date))
 snp = snp500(date=date)
