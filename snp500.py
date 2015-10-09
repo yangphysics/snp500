@@ -2,6 +2,15 @@ import pandas as pd
 from bs4 import BeautifulSoup
 import urllib
 
+def print_symbol(sl):
+    ''' print S&P 500 list in a table form (each row contains 20 symbols)'''
+    print('*'*120)
+    print('  '),
+    for i,s in enumerate(sl):
+        print('{0:5}'.format(s)),
+        if (i+1)%20 == 0: print('\n  '),
+    print('\n'+'*'*120)
+
 class SNP500:
     def __init__(self, is_print=False):
         self.is_print = is_print
@@ -88,9 +97,9 @@ class SNP500:
         #   since data only provided for Jan. 1 for each year from 2008 to 2015,
         #   we will only do the five bench-mark test.
         #years = range(2008, 2016)
-        years = [2011]
+        years = [2012]
         #   read in the bench-mark data
-        snp_benchmark_all = pd.read_csv('snp500_benchmark.csv')
+        snp_benchmark_all = pd.read_csv('./data/snp500_benchmark.csv')
         #   do the bench-mark
         for year in years:
             yr = str(year)
@@ -108,12 +117,12 @@ class SNP500:
             snp = self.__call__(yr+'-01-01')
             print(' difference ({0}): {1}'.format(yr, list(set(snp)-set(snp_bm))))
             print('')
-            print('  snp_bm: {0}'.format(len(snp_bm)))
-            for x in snp_bm: print(x),
-            print('')
-            print('  snp: {0}'.format(len(snp)))
-            for x in snp: print(x),
-            print('')
+            print('  **snp_bm[{0}]** ==> '.format(len(snp_bm)))
+            print_symbol(snp_bm)
+            print('\n')
+            print('  **snp[{0}]**    ==> '.format(len(snp)))
+            print_symbol(snp)
+            print('\n')
             #assert(len(snp)==len(snp_bm))
             #assert(snp==snp_bm)
 
@@ -141,13 +150,15 @@ class SNP500:
             s_new = ds.ix[idx,1]
             s_old = ds.ix[idx,3]
             if s_old == '': 
-                if self.is_print: print('  {0:3}  ** Delete  {1:5} on {2}'.format(idx,s_new,date))
+                if self.is_print: 
+                    print('  {0:3}  ** Delete  {1:5} on  {2}'.format(idx,s_new,date.strftime('%m-%d-%Y')))
                 snp = [x for x in snp if x!=s_new]
                 assert(s_new not in snp)
             else:
                 if s_new != s_old:  #  avoid GAS -> GAS case
                     if s_new == 'JOYG': s_new = 'JOY'   #  another bug of this Wikipedia page
-                    if self.is_print: print('  {0:3}  replace {1:5} by {2:5} on {3}'.format(idx,s_new,s_old,date))
+                    if self.is_print: 
+                        print('  {0:3}  replace {1:5} by {2:5} on  {3}'.format(idx,s_new,s_old,date.strftime('%m-%d-%Y')))
                     snp = [s_old if x==s_new else x for x in snp]
                     #if s_old=='AYE': print(sorted(snp))
                     assert(s_new not in snp)
@@ -169,18 +180,24 @@ def test():
     snp500 = SNP500(is_print=True)
 
     date1 = '2015-09-15'
-    print('\n TEST-I:\n   We want to get S&P 500 list on date {0}'.format(date1))
+    print('\n\n'+'='*60)
+    print('   TEST-I:\n   We want to get S&P 500 list on date {0}'.format(date1))
+    print('='*60)
     snp1 = snp500(date=date1)
-    print(' the first 20 items in the list: {0}\n'.format(snp1[:20]))
+    print('\n  **S&P_list[{0}]** ==> '.format(len(snp1)))
+    print_symbol(snp1)
 
     date2 = '2014-08-01'
-    print('\n TEST-II:\n   We want to get S&P 500 list on date {0}'.format(date2))
+    print('\n\n'+'='*60)
+    print('   TEST-II:\n   We want to get S&P 500 list on date {0}'.format(date2))
+    print('='*60)
     snp2 = snp500(date=date2)
-    print(' the first 20 items in the list: {0}\n'.format(snp2[:20]))
+    print('\n  **S&P_list[{0}]** ==> '.format(len(snp2)))
+    print_symbol(snp2)
 
 if __name__ == '__main__':
-    #test()
-    bench_mark()
+    test()
+    #bench_mark()
 
 
 
