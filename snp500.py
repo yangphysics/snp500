@@ -14,7 +14,7 @@ class SNP500:
 
         #  get current version of SNP500 list and put ticker symbols in snp0
         self.snp500 = self.get_snp500_current()
-        self.snp0 = list(self.snp500[0])
+        self.snp0 = list(self.snp500[0]) 
         self.update()
         
     def get_snp500_current(self):
@@ -82,11 +82,57 @@ class SNP500:
                         assert(s_new  in snp)
                         assert(s_old not in snp)
 
+    def benchmark(self):
+        #   bench-mark to the list extracted from 
+        #      http://marketcapitalizations.com/historical-data/historical-components-sp-500/
+        #   since data only provided for Jan. 1 for each year from 2008 to 2015,
+        #   we will only do the five bench-mark test.
+        #years = range(2008, 2016)
+        years = [2011]
+        #   read in the bench-mark data
+        snp_benchmark_all = pd.read_csv('snp500_benchmark.csv')
+        #   do the bench-mark
+        for year in years:
+            yr = str(year)
+            snp_bm = list(snp_benchmark_all['Ticker'][snp_benchmark_all[yr].notnull()])
+            #  'TGNA','ZBH', 'WRK', 'FOX', 'CMCSK' and 'NWS' are missing from this list?? add them
+            snp_bm.append('TGNA')
+            snp_bm.append('ZBH')
+            snp_bm.append('WRK')
+            snp_bm.append('FOX')
+            snp_bm.append('CMCSK')
+            snp_bm.append('NWS')
+            if year < 2015:
+                snp_bm = ['GOOG' if x=='GOOGL' else x for x in snp_bm]   #   'GOOG' is the old name
+            snp_bm = sorted([x.replace('.','-') for x in snp_bm])
+            snp = self.__call__(yr+'-01-01')
+            print(' difference ({0}): {1}'.format(yr, list(set(snp)-set(snp_bm))))
+            print('')
+            print('  snp_bm: {0}'.format(len(snp_bm)))
+            for x in snp_bm: print(x),
+            print('')
+            print('  snp: {0}'.format(len(snp)))
+            for x in snp: print(x),
+            print('')
+            #assert(len(snp)==len(snp_bm))
+            #assert(snp==snp_bm)
+
     
     #  get up-to-'date' S&P 500 list
     def __call__(self, date='2015-09-15'):
         snp = [x for x in self.snp0]
         ds = self.dif.ix[:,[0,1,3]]
+
+        snp.append('GCI')
+        snp.append('MWV')
+        snp.append('ZMH')
+        #  KRFT is delisted on '2015-07-02', this is not shown up in the Wikipedia page
+        #  add it manually
+        if date < '2015-07-02':
+            snp.append('KRFT')
+        #  it looks "KHC" is on list on '2015-07-06', so remove it manully if needed
+        if date < '2015-07-02':
+            snp = [x for x in snp if x!='KHC']
 
         #  apply the changes on the newest list
         N = len(ds[ds[0]>=date])
@@ -100,14 +146,23 @@ class SNP500:
                 assert(s_new not in snp)
             else:
                 if s_new != s_old:  #  avoid GAS -> GAS case
+                    if s_new == 'JOYG': s_new = 'JOY'   #  another bug of this Wikipedia page
                     if self.is_print: print('  {0:3}  replace {1:5} by {2:5} on {3}'.format(idx,s_new,s_old,date))
                     snp = [s_old if x==s_new else x for x in snp]
+                    #if s_old=='AYE': print(sorted(snp))
                     assert(s_new not in snp)
-                    if s_new not in ['KRFT','ANR','JOYG','AYE']:   #  avoid cases related to KRFT
-                        assert(s_old in snp)
-        return snp
+                    assert(s_old in snp)
+        return sorted(snp)
     
     
+    
+def bench_mark():
+    #  create the SNP500 object
+    print('')
+    snp500 = SNP500(is_print=True)
+    snp500.benchmark()
+    
+
 def test():
     #  create the SNP500 object
     print('')
@@ -124,7 +179,8 @@ def test():
     print(' the first 20 items in the list: {0}\n'.format(snp2[:20]))
 
 if __name__ == '__main__':
-    test()
+    #test()
+    bench_mark()
 
 
 
