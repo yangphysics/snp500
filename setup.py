@@ -42,7 +42,7 @@ setup(
     author='Shuxiang Yang',
     tests_require=['pytest'],
     install_requires=['pandas>=0.16.0',
-                      'bs4>=4.3.2:',
+                      'bs4>=4.3.2',
                     ],
     cmdclass={'test': PyTest},
     author_email='yangphysics@gmail.com',
