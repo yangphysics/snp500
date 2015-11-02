@@ -6,7 +6,7 @@ import codecs
 import os
 import sys
 
-import sandman
+import snp500
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -49,7 +49,7 @@ setup(
     packages=['snp500'],
     include_package_data=True,
     platforms='any',
-    test_suite='sandman.test.test_sandman',
+    #test_suite='snp500.test.test_snp500',
     classifiers = [
         'Programming Language :: Python',
         'Development Status :: 4 - Beta',
