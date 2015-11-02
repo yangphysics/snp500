@@ -32,9 +32,11 @@ class PyTest(TestCommand):
         errcode = pytest.main(self.test_args)
         sys.exit(errcode)
 
+from _version import __version__
+
 setup(
     name='snp500',
-    version=snp500.__version__,
+    version=__version__,
     url='https://github.com/yangphysics/snp500',
     license='None',
     author='Shuxiang Yang',
